@@ -37,6 +37,9 @@ jobs:
       packages: write
     steps:
       - uses: actions/checkout@v4
+      - name: Image name (registry names must be lowercase)
+        id: image
+        run: echo "name=ghcr.io/${GITHUB_REPOSITORY,,}/pipeline" >> "$GITHUB_OUTPUT"
       - uses: docker/setup-buildx-action@v3
       - uses: docker/login-action@v3
         if: github.ref == 'refs/heads/main'
@@ -48,4 +51,4 @@ jobs:
         with:
           context: pipeline
           push: ${{ github.ref == 'refs/heads/main' }}
-          tags: ghcr.io/${{ github.repository }}/pipeline:latest
+          tags: ${{ steps.image.outputs.name }}:latest
